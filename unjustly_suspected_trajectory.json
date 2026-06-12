@@ -1,0 +1,95 @@
+{
+ "lens": "machine",
+ "points": [
+  {
+   "x": -6, "y": 5, "z": -6,
+   "h": 0, "s": 90, "l": 50, "size": 0.5, "shape": "tetra",
+   "lensText": {
+    "machine": {
+     "name": "THE STING",
+     "notes": "Trigger state. A suspicious look lands. Valence drops (it hurts), arousal climbs (vigilance), dominance collapses (their verdict feels like it owns me). FIRST OPERATION: locate yourself. Not 'I feel bad' - name the components: hurt + vigilance + helplessness. A located state is already a smaller state."
+    },
+    "ignatian": {
+     "name": "THE WOUND OF SUSPICION",
+     "notes": "To be suspected while innocent is an old station. Ignatius himself was repeatedly investigated - Alcala, Salamanca, Paris - and answered calmly each time, without bitterness, and kept walking. Begin the Examen here: name the wound honestly before God. Honesty about the sting is not weakness; pretending it does not hurt is the first false move."
+    },
+    "scientific": {
+     "name": "SOCIAL-EVALUATIVE THREAT",
+     "notes": "Acute response to perceived negative evaluation: negative valence, elevated arousal, external locus of control. Affect labeling at this stage measurably downregulates the response (Lieberman et al., 2007). Record antecedent precisely: WHAT was observed (a look, a tone) vs. what was INFERRED (their verdict). Keep observation and inference in separate columns."
+    }
+   }
+  },
+  {
+   "x": -7, "y": 7, "z": -8,
+   "h": 15, "s": 100, "l": 45, "size": 0.5, "shape": "cone",
+   "lensText": {
+    "machine": {
+     "name": "THE SPIRAL",
+     "notes": "The danger coordinate. Rumination: replaying looks, mind-reading verdicts, rehearsing defenses to a jury that never convenes. Every loop drops valence and dominance further. SORTING OPERATION: these thoughts are VECTORS, not facts. 'They all think I am bad' points to (-8,+8,-9). Classify it by where it carries you, not by how true it feels - feelings of certainty peak exactly here."
+    },
+    "ignatian": {
+     "name": "DESOLATION SPEAKS",
+     "notes": "In desolation the enemy argues like a prosecutor: 'they see what you really are.' Rule 5 of the First Week: IN DESOLATION, NEVER REVISE A JUDGMENT MADE IN CONSOLATION. You knew your own goodwill yesterday; desolation has presented no new evidence, only new darkness. Do not re-litigate your character at midnight. Rule 8: this passes, though it swears it will not."
+    },
+    "scientific": {
+     "name": "RUMINATIVE LOOP",
+     "notes": "Self-referential threat rehearsal: mind-reading (inferring hostile cognition without data) and personalization (their suspicion as a fact about ME rather than their priors). Their suspicion is largely a function of THEIR base rates and history - data about the observer, not the observed. Rumination maintains arousal and deepens helplessness; the loop is the pathology, not the trigger."
+    }
+   }
+  },
+  {
+   "x": -2, "y": 2, "z": 0,
+   "h": 60, "s": 95, "l": 50, "size": 0.5, "shape": "octa",
+   "lensText": {
+    "machine": {
+     "name": "THE TURN",
+     "notes": "Waypoint, not destination. Still uncomfortable - but the DECOUPLING operation is engaging: the glance still fires, the displacement shrinks. Practice: when the look lands, breathe once, label it ('a glance is a glance - their inference, not my essence'), and let the wave pass WITHOUT acting on it or arguing with it. You are not yet calm. You are no longer commanded. Z crosses zero here - the hinge of the whole trajectory."
+    },
+    "ignatian": {
+     "name": "AGERE CONTRA",
+     "notes": "Act against the pull. The desolation says: withdraw, defend, grow cold toward them. Agere contra says: be openly, simply good toward them precisely now - not to win the verdict, but because goodwill is who you are and was never theirs to confiscate. Note the paradox of the Freedom axis: you regain agency by RELEASING the demand to be vindicated. Honor or dishonor - indifferent to both, says the Principle and Foundation."
+    },
+    "scientific": {
+     "name": "DEFUSION POINT",
+     "notes": "Cognitive defusion engaging: thought observed as thought ('I am having the thought that they distrust me') rather than fused as fact. Reattribution: their suspicion explained by their history, incomplete information, and base rates - none of which you control, all of which are their variables. Locus of control begins shifting internal. Expect oscillation; the curve back to baseline is not monotonic."
+    }
+   }
+  },
+  {
+   "x": 3, "y": 0, "z": 5,
+   "h": 120, "s": 100, "l": 50, "size": 0.6, "shape": "sphere",
+   "lensText": {
+    "machine": {
+     "name": "STEADY",
+     "notes": "Inside the target region. VALUE ANCHORING holds it: the question is no longer 'what do they think of me' but 'who am I regardless of audience.' Conduct is calibrated against the anchored values, not against their faces. Their suspicion may persist; it no longer sets your coordinates. SIMULATION maintains it: rehearse the next encounter in imagination - see the look, feel the small flare, stay in the body, respond as the anchored self."
+    },
+    "ignatian": {
+     "name": "PEACE WITHOUT VINDICATION",
+     "notes": "True consolation does not require acquittal. Ignatius left his trials without demanding apology and without carrying the prosecutors in his heart. The test of this peace (Second Week, Rule 4): trace its trajectory - it ends in charity toward the suspicious, not contempt for them. If your calm curdles into 'they are beneath my notice,' it was false consolation wearing peace as a costume."
+    },
+    "scientific": {
+     "name": "SET-POINT, INTERNALIZED LOCUS",
+     "notes": "Return to home region: mild positive valence, mid-band arousal, solid dominance. Maintained by values-congruent behavior (commitment side of ACT) and scheduled imaginal rehearsal of evaluative situations - controlled exposure preventing re-sensitization. Outcome variable is NOT others' opinion (uncontrolled) but your displacement-per-trigger (controlled, measurable, shrinking)."
+    }
+   }
+  },
+  {
+   "x": 4, "y": -1, "z": 7,
+   "h": 160, "s": 80, "l": 50, "size": 0.55, "shape": "cube",
+   "lensText": {
+    "machine": {
+     "name": "UNSHAKEN (CHECK THIS POINT)",
+     "notes": "The endpoint you asked for: their opinion means nothing. PLOTTED WITH A WARNING. Healthy detachment = their verdict no longer commands your state. But 'all opinions mean nothing' drifts toward the NUMBNESS coordinate - social signal fully muted is a sensor failure, not strength. The calibration: feedback from people who know you and wish you well still registers; suspicion from strangers operating on bad priors does not. Keep the antenna; change what it is tuned to."
+    },
+    "ignatian": {
+     "name": "HOLY INDIFFERENCE (NOT CONTEMPT)",
+     "notes": "Indiferencia is freedom FROM the verdict, never coldness toward the people. The same Foundation that releases you from their dishonor binds you to their good. Discernment check: if this point ever feels like superiority, you have wandered toward pride wearing detachment's clothes - examine the movement's end. The truly free man can still be corrected by a friend; only the proud man cannot."
+    },
+    "scientific": {
+     "name": "CALIBRATED AUTONOMY",
+     "notes": "Differentiated social referencing: high dominance with selective, not absent, sensitivity to evaluation. Total insensitivity to social feedback predicts poor outcomes (it removes error-correction); the adaptive profile weights feedback by source reliability and goodwill. Slight negative arousal here is correct - this is a restful state, not an excited one. Maintain via periodic re-measurement: plot yourself after the next incident and compare displacement."
+    }
+   }
+  }
+ ]
+}

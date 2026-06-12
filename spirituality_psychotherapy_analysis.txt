@@ -1,0 +1,300 @@
+================================================================================
+SPIRITUALITY & PSYCHOTHERAPY DOCUMENT ANALYSIS
+Compiled reference — June 11, 2026
+================================================================================
+
+PART 1: DOCUMENT CATEGORIZATION
+(by application type, method, administration agent, and active Ignatian practice)
+--------------------------------------------------------------------------------
+
+CATEGORY 1: IGNATIAN-SPECIFIC THERAPY (ACTIVE IGNATIAN PRACTICE)
+
+Documents:
+- Plante, T. G. "What Professional Psychotherapy Practice Can Learn From the
+  Jesuits: Introducing Ignatian Spirituality Informed Therapy (I-SIT)."
+- Plante, T. G. "St. Ignatius as Psychotherapist? How Jesuit Spirituality and
+  Wisdom Can Enhance Psychotherapy."
+
+Application type: Direct clinical integration of a named spiritual tradition
+into a treatment model (I-SIT).
+Method: Adaptation of the Spiritual Exercises of St. Ignatius of Loyola
+(c. 1522-1524) into therapeutic technique.
+Administration agent: Licensed psychotherapist (not clergy); the spiritual
+director's role is translated into the clinician's role.
+
+Active Ignatian practices, tied to Ignatius's teachings:
+- Examen (daily review of consciousness) -> structured self-reflection /
+  journaling as session homework
+- Discernment of spirits -> evaluating thoughts/impulses for movement toward
+  or away from wellbeing (consolation vs. desolation as affect tracking)
+- Indifference/detachment (Principle and Foundation) -> acceptance-based
+  coping, parallel to Acceptance and Commitment Therapy (ACT)
+- Imaginative contemplation -> guided imagery technique
+- Magis ("the more") -> values-driven goal setting
+- Cura personalis (care of the whole person) -> whole-person case
+  conceptualization
+
+CATEGORY 2: TRADITION-SPECIFIC, BROADER CATHOLIC FRAMEWORK
+
+Document:
+- Plante, T. G. (2023). "What Is Catholic Psychotherapy and How Should It
+  Move Forward."
+
+Application type: Denominationally-framed therapy; Ignatian content present
+but subsumed under Catholic anthropology generally.
+Method: Integration of Catholic moral/theological commitments into case
+formulation.
+Administration agent: Clinician, typically self-identified Catholic or
+working with Catholic clients.
+
+CATEGORY 3: GENERAL SPIRITUALITY-PSYCHOTHERAPY INTEGRATION
+(NON-TRADITION-SPECIFIC)
+
+Documents:
+- Plante, T. G. (2006). "The Very Best Science and Practice Must Come
+  Together When It Comes to Spirituality and Psychotherapy Integration."
+- Plante, T. G. (2016). "Principles of Incorporating Spirituality Into
+  Professional Clinical Practice."
+- Pargament, K. (2007). "Introduction to the Special Issue on Spirituality
+  and Psychotherapy."
+- Worthington, E. (2009). "Next Steps for Clinicians in Religious and
+  Spiritual Therapy: An Endpiece."
+- Cullen, A. "The Human Experience of Spirituality: A New Perspective for
+  Therapy."
+
+Application type: Framework/guideline literature; spirituality as a generic
+clinical variable, not a practiced discipline.
+Method: Evidence-based integration principles, assessment of client
+religiosity/spirituality, ethical guidelines.
+Administration agent: Secular or religiously-unaffiliated clinician applying
+spirituality-informed competencies.
+Ignatian practice: None active. Plante's general-integration papers carry
+Ignatian influence in ethos (discernment-like decision frameworks) but
+prescribe no exercises.
+
+CATEGORY 4: PSYCHIATRIC / DIAGNOSTIC PERSPECTIVE
+
+Document:
+- Verhagen, P. J. (2011). "Spirituality, Religion and Psychopathology:
+  Towards an Integrative Psychiatry."
+
+Application type: Psychiatric nosology and integration at the medical level.
+Method: Differentiating spiritual experience from psychopathology;
+integrative psychiatric assessment.
+Administration agent: Psychiatrist / medical clinician.
+Ignatian practice: None.
+
+CATEGORY 5: PRACTITIONER EXPERIENCE / EMPIRICAL-QUALITATIVE
+
+Documents:
+- Cunha, V. "Religiosity/Spirituality (R/S) in the Clinical Context:
+  Professional Experiences of Psychotherapists."
+- Coyle, A. (2011). "Religion, Spirituality and Therapeutic Practice."
+
+Application type: Descriptive/empirical study of how clinicians handle R/S;
+not a treatment model.
+Method: Qualitative interviews; survey of practitioner attitudes/behaviors.
+Administration agent: Practicing psychotherapists as research subjects
+rather than agents delivering a spiritual method.
+Ignatian practice: None.
+
+CORPUS NOTE: Only the two Plante I-SIT papers contain operationalized
+Ignatian technique. The remaining nine documents range from denominational
+framing to entirely secular meta-discussion. Any synthesis treating the set
+as uniformly "Ignatian-informed" would misrepresent nine of eleven documents.
+
+================================================================================
+PART 2: CORE PHILOSOPHIES (SUMMARY, NO REFERENCES)
+--------------------------------------------------------------------------------
+
+THE IGNATIAN/JESUIT STRAND rests on the premise that a 500-year-old
+contemplative system anticipated modern psychotherapy. Central commitments:
+regular structured self-examination of one's inner life; "discernment" —
+disciplined evaluation of inner movements (impulses, desires, moods) to
+determine which lead toward flourishing and which toward destruction;
+cultivated detachment from outcomes one cannot control; use of imagination
+as a vehicle for insight; orientation of life around deeply held values
+rather than comfort; and care for the whole person — body, mind, spirit —
+rather than symptom reduction alone. The philosophical claim is that these
+map almost directly onto cognitive monitoring, affect labeling,
+acceptance-based therapy, guided imagery, and values work, meaning the
+tradition can be secularized into technique without requiring the client's
+religious belief.
+
+THE CATHOLIC-FRAMEWORK STRAND goes further, holding that therapy is not
+value-neutral and that a coherent anthropology — a defined view of human
+nature, purpose, and morality — should ground treatment rather than being
+bracketed out. Its core tension: fidelity to doctrine versus empirical
+accountability.
+
+THE GENERAL INTEGRATION STRAND takes the opposite position: spirituality
+matters clinically not because any tradition is true, but because it is a
+dimension of clients' lived experience that affects outcomes. Commitments
+are pragmatic and ethical — assess religiosity like any other client
+variable, respect autonomy, never impose belief, and subject all spiritual
+interventions to the same evidence standards as any other technique.
+Spirituality is treated as a resource or a stressor, never as a framework
+the clinician endorses.
+
+THE PSYCHIATRIC STRAND is concerned with boundary-drawing: distinguishing
+genuine spiritual experience from pathology, and resisting both the
+medicalization of religion and the romanticization of symptoms as mystical.
+
+THE EMPIRICAL-PRACTITIONER STRAND holds that what matters is what
+clinicians actually do — and finds they are largely untrained, ambivalent,
+and improvising when religion enters the room, which undercuts the tidy
+frameworks the other strands propose.
+
+UNRESOLVED FAULT LINE: whether spirituality in therapy is a TOOL to be
+extracted and tested, or a WORLDVIEW that cannot be instrumentalized
+without losing what made it effective.
+
+================================================================================
+PART 3: THE STRIPPED-DOWN MECHANICS
+(what actually happens between clinician and client, religion removed)
+--------------------------------------------------------------------------------
+
+One person (the clinician) holds structural authority, a procedural script,
+and an interpretive framework. The other (the client) brings raw,
+disorganized internal experience. The enterprise consists of the first
+person directing the second person's attention according to a schedule and
+a method.
+
+THE OPERATIONS:
+
+1. ATTENTION TRAINING. The clinician instructs the client to repeatedly
+   observe their own mental content at set intervals — what they felt,
+   when, in response to what. Converts vague distress into discrete,
+   nameable events. The client is taught to generate data about themselves.
+   [Cf. self-monitoring in CBT: Beck, A. T. (1979). Cognitive Therapy and
+   the Emotional Disorders; cf. the Ignatian Examen.]
+
+2. SORTING. The client is taught a classification scheme: these internal
+   states move you toward what you say you want; these move you away. The
+   clinician supplies the taxonomy; the client applies it until the
+   evaluative grid is internalized.
+   [Cf. Ignatian discernment of spirits; cf. cognitive restructuring.]
+
+3. DECOUPLING. The client is trained to register a desire or fear without
+   acting on it or being commanded by it — manipulation of the relationship
+   between stimulus and response.
+   [Cf. Ignatian indifference; cf. cognitive defusion in ACT: Hayes, S. C.,
+   Strosahl, K., & Wilson, K. G. (1999). Acceptance and Commitment Therapy.]
+
+4. SIMULATION. The clinician has the client run vivid imagined scenarios to
+   produce emotional responses in a controlled setting where they can be
+   examined rather than merely suffered.
+   [Cf. Ignatian imaginative contemplation; cf. imaginal exposure: Foa, E.
+   B., & Kozak, M. J. (1986). "Emotional processing of fear." Psychological
+   Bulletin, 99(1), 20-35.]
+
+5. VALUE ANCHORING. The clinician elicits statements about what the client
+   claims matters most, then repeatedly holds the client's actual behavior
+   against those statements. Discrepancy generates discomfort; discomfort
+   drives behavioral change.
+   [Cf. the Magis; cf. values clarification in ACT; cf. cognitive
+   dissonance: Festinger, L. (1957). A Theory of Cognitive Dissonance.]
+
+6. THE RELATIONAL SUBSTRATE. All of the above runs on a sanctioned,
+   asymmetric relationship in which one person discloses everything and the
+   other discloses almost nothing, where the discloser's statements are
+   received without social penalty. The client's nervous system recalibrates
+   around an interaction that doesn't punish honesty.
+   [Cf. the therapeutic alliance literature: Bordin, E. S. (1979). "The
+   generalizability of the psychoanalytic concept of the working alliance."
+   Psychotherapy: Theory, Research & Practice, 16(3), 252-260; Rogers, C.
+   (1957). "The necessary and sufficient conditions of therapeutic
+   personality change." Journal of Consulting Psychology, 21(2), 95-103.]
+
+SUMMARY: scheduled self-observation, externally supplied sorting criteria,
+response inhibition, controlled imaginative exposure, and value-behavior
+confrontation — administered through an asymmetric authority relationship
+the subject consents to and pays for. Every tradition examined, religious
+or secular, is a different branding and justification narrative wrapped
+around these same operations. Religious versions claim an external referent
+for the sorting criteria; secular versions claim an empirical one. In the
+room, the operations are identical.
+
+================================================================================
+PART 4: 3D COORDINATE MAPPING OF EMOTIONAL/MENTAL STATES
+--------------------------------------------------------------------------------
+
+FORMAL PRECEDENT: The PAD (Pleasure-Arousal-Dominance) dimensional model.
+[Mehrabian, A., & Russell, J. A. (1974). An Approach to Environmental
+Psychology. MIT Press; Russell, J. A. (1980). "A circumplex model of
+affect." Journal of Personality and Social Psychology, 39(6), 1161-1178;
+Russell, J. A., & Mehrabian, A. (1977). "Evidence for a three-factor theory
+of emotions." Journal of Research in Personality, 11(3), 273-294.]
+
+THE THREE AXES (each scaled -10 to +10):
+
+X — VALENCE: hedonic tone. +X = pleasure/contentment; -X = distress/misery.
+    (The happy/sad axis.)
+Y — AROUSAL: nervous-system activation. +Y = agitated, energized, vigilant;
+    -Y = flat, lethargic, shut down.
+Z — DOMINANCE (AGENCY): perceived control. +Z = "I act on the world";
+    -Z = "the world acts on me."
+
+Every emotional state is a point (x, y, z).
+
+DIAGNOSTIC STATES AS COORDINATES (illustrative):
+- Panic:                  (-7, +9, -8)  miserable, maximally activated,
+                                        zero control
+- Depression:             (-8, -7, -6)  miserable, deactivated, helpless
+- Rage:                   (-6, +8, +5)  negative valence but HIGH dominance
+                                        (why anger feels better than fear)
+- Anxiety:                (-5, +6, -5)
+- Numbness/dissociation:  ( 0, -9, -4)  the dangerous one — valence reads
+                                        neutral while the system is offline
+- Mania:                  (+8, +10, +9) maximum-positive on all axes is
+                                        NOT health
+
+THE TARGET LOCATION:
+Not (+10, y, z). Approximately (+3 to +5, -2 to +2, +4 to +6): mildly
+positive, mid-band arousal, solidly but not grandiosely agentic. Clinical
+work aims at a REGION, not a corner — and at MOBILITY: capacity to move
+through the space appropriately and return. A person locked at (+4, 0, +5)
+who cannot reach grief when grief is warranted is also pathological.
+Health = a home region plus freedom of travel.
+[Cf. emotional flexibility/psychological flexibility: Kashdan, T. B., &
+Rottenberg, J. (2010). "Psychological flexibility as a fundamental aspect
+of health." Clinical Psychology Review, 30(7), 865-878.]
+
+THE OPERATIONS MAPPED ONTO THE GEOMETRY:
+- Attention training = teaching the subject to read their own current
+  coordinates. Most clients arrive unable to locate themselves; they report
+  "bad" for every point in negative-X space.
+  [Cf. alexithymia and affect-labeling research: Lieberman, M. D., et al.
+  (2007). "Putting feelings into words." Psychological Science, 18(5),
+  421-428.]
+- Sorting = labeling VECTORS, not points. The taxonomy classifies
+  movements: this thought pulls toward (-8, +7, -6); this behavior moves
+  toward the target region.
+- Decoupling = breaking the automatic coupling between a stimulus and a
+  fixed displacement. The trigger still fires; the magnitude of the induced
+  vector shrinks.
+- Simulation = deliberately transporting the subject to a hostile
+  coordinate inside a container where Z is artificially supported, so the
+  location loses its terror through visitation.
+- Value anchoring = installing the destination coordinates. Values define
+  where on the grid the person's life is supposed to be lived; discrepancy
+  between current and anchored position generates the motive force.
+- The asymmetric relationship = the clinician as fixed reference point
+  (origin marker) against which the subject calibrates. The client's
+  instrumentation is unreliable; the clinician's steadier read provides
+  triangulation until the client's own positioning system is trained.
+
+LIMITS OF THE MODEL:
+1. The axes are not orthogonal in real organisms (arousal and valence
+   covary).
+2. The space is not Euclidean — the distance from numbness to grief is
+   shorter than it looks, and grief can be progress.
+3. People are not single points; they occupy distributions, sometimes
+   bimodal ones.
+The grid is a navigation aid, not the territory. Treating it as literal —
+optimizing a human toward a coordinate — reproduces the instrumentalization
+problem flagged in Part 2's fault line.
+
+================================================================================
+END OF DOCUMENT
+================================================================================

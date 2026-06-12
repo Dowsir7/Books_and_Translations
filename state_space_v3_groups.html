@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>STATE SPACE — Three Lenses v3</title>
+<style>
+  :root{
+    --bg:#000; --panel:#020c04; --main:#00ff41; --dim:#00992a;
+    --faint:#003b12; --danger:#ff4444; --font:'Courier New',Courier,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);
+    font-family:var(--font);color:var(--main);transition:background .4s;}
+  #canvas-wrap{position:fixed;top:0;left:0;width:100%;height:67%;touch-action:none;}
+  #canvas-wrap canvas{display:block;}
+  #hud{position:fixed;top:8px;left:10px;font-size:11px;color:var(--dim);
+    pointer-events:none;line-height:1.55;
+    text-shadow:0 0 6px color-mix(in srgb,var(--main) 50%,transparent);}
+  #hud b{color:var(--main);}
+  #scan{position:fixed;top:0;left:0;width:100%;height:67%;pointer-events:none;z-index:5;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 2px,rgba(0,255,65,.025) 2px 4px);
+    display:none;}
+  body[data-lens="machine"] #scan{display:block;}
+
+  #panel{position:fixed;bottom:0;left:0;width:100%;height:33%;
+    background:var(--panel);border-top:1px solid var(--dim);
+    box-shadow:0 -8px 30px color-mix(in srgb,var(--main) 12%,transparent);
+    overflow-y:auto;padding:8px 12px 24px;z-index:10;transition:background .4s;}
+  #panel::-webkit-scrollbar{width:4px;}
+  #panel::-webkit-scrollbar-thumb{background:var(--dim);}
+
+  .row{display:flex;align-items:center;gap:8px;margin:6px 0;}
+  button{background:transparent;border:1px solid var(--dim);color:var(--main);
+    font-family:var(--font);font-size:14px;padding:8px 14px;cursor:pointer;
+    text-shadow:0 0 5px color-mix(in srgb,var(--main) 60%,transparent);}
+  button:active{background:var(--faint);}
+  button.danger{border-color:#5a1010;color:var(--danger);}
+  button.small{font-size:11px;padding:6px 10px;letter-spacing:1px;}
+  button.on{background:var(--faint);border-color:var(--main);}
+
+  #lens-bar{display:flex;gap:6px;border-bottom:1px solid var(--faint);
+    padding-bottom:8px;margin-bottom:8px;align-items:center;}
+  #lens-toggle{flex:1;text-align:left;letter-spacing:2px;font-size:12px;}
+  #drawer{display:none;border:1px solid var(--faint);padding:10px;margin-bottom:10px;
+    background:color-mix(in srgb,var(--main) 3%,transparent);}
+  #drawer.open{display:block;}
+  .lens-card{border:1px solid var(--faint);padding:10px;margin:6px 0;cursor:pointer;}
+  .lens-card.active{border-color:var(--main);
+    box-shadow:0 0 10px color-mix(in srgb,var(--main) 25%,transparent) inset;}
+  .lens-card h3{font-size:13px;letter-spacing:2px;margin-bottom:3px;}
+  .lens-card p{font-size:10px;color:var(--dim);letter-spacing:.5px;}
+  .toggles{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+  .tog{font-size:10px;padding:7px 9px;letter-spacing:1px;}
+  .tog.on{background:var(--faint);border-color:var(--main);}
+  #about{font-size:11px;line-height:1.65;color:var(--dim);margin-top:10px;
+    border-top:1px solid var(--faint);padding-top:8px;}
+  #about b,#about i{color:var(--main);}
+  #about h4{font-size:11px;letter-spacing:2px;color:var(--main);margin:8px 0 4px;}
+  .hint{font-size:9px;color:var(--dim);letter-spacing:.5px;margin-top:8px;font-style:italic;}
+
+  .nav-row{justify-content:space-between;border-bottom:1px solid var(--faint);
+    padding-bottom:8px;margin-bottom:8px;}
+  #pt-name,#grp-name{flex:1;background:transparent;border:none;
+    border-bottom:1px dashed var(--faint);color:var(--main);font-family:var(--font);
+    font-size:15px;font-weight:bold;text-align:center;text-transform:uppercase;
+    letter-spacing:2px;padding:4px;
+    text-shadow:0 0 8px color-mix(in srgb,var(--main) 70%,transparent);}
+  #pt-counter,#grp-counter{font-size:10px;color:var(--dim);text-align:center;letter-spacing:1px;}
+
+  .sec-label{font-size:10px;letter-spacing:3px;color:var(--dim);
+    margin:12px 0 2px;border-bottom:1px solid var(--faint);padding-bottom:2px;}
+  .slider-row{display:grid;grid-template-columns:74px 1fr 58px;
+    align-items:center;gap:8px;margin:5px 0;}
+  .slider-row label{font-size:11px;letter-spacing:1px;}
+  .slider-row .sub{display:block;font-size:8px;color:var(--dim);letter-spacing:0;}
+  input[type=range]{-webkit-appearance:none;width:100%;height:22px;background:transparent;}
+  input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--dim);}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+    margin-top:-8px;background:var(--bg);border:2px solid var(--main);border-radius:50%;
+    box-shadow:0 0 8px color-mix(in srgb,var(--main) 80%,transparent);}
+  input[type=range]::-moz-range-track{height:2px;background:var(--dim);}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--bg);
+    border:2px solid var(--main);border-radius:50%;}
+  input[type=number]{width:58px;background:transparent;border:1px solid var(--faint);
+    color:var(--main);font-family:var(--font);font-size:13px;padding:5px 4px;text-align:center;}
+  #hue-slider::-webkit-slider-runnable-track, #grp-hue::-webkit-slider-runnable-track{height:6px;
+    background:linear-gradient(to right,hsl(0,100%,50%),hsl(60,100%,50%),hsl(120,100%,50%),
+    hsl(180,100%,50%),hsl(240,100%,50%),hsl(300,100%,50%),hsl(360,100%,50%));}
+  #hue-slider::-webkit-slider-thumb, #grp-hue::-webkit-slider-thumb{margin-top:-6px;}
+  #shape-row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;}
+  .shape-btn{flex:1;min-width:60px;font-size:10px;letter-spacing:1px;padding:8px 4px;}
+  .shape-btn.active{background:var(--faint);border-color:var(--main);}
+  #notes{width:100%;height:64px;background:color-mix(in srgb,var(--main) 3%,transparent);
+    border:1px solid var(--faint);color:var(--main);font-family:var(--font);
+    font-size:12px;padding:6px;resize:vertical;}
+  #notes::placeholder{color:var(--faint);}
+  .swatch{width:22px;height:22px;border:1px solid var(--dim);border-radius:50%;}
+  #empty-msg,#grp-empty{text-align:center;color:var(--dim);padding:20px 10px;font-size:12px;
+    letter-spacing:1px;display:none;}
+  #motto{text-align:center;font-size:9px;letter-spacing:4px;color:var(--faint);margin-top:16px;}
+
+  /* group stats */
+  #grp-stats{font-size:10px;line-height:1.7;color:var(--dim);border:1px solid var(--faint);
+    padding:8px;margin-top:8px;letter-spacing:.5px;}
+  #grp-stats b{color:var(--main);}
+  .oct-row{display:flex;justify-content:space-between;}
+  .oct-row .tag{font-style:italic;}
+  @media (prefers-reduced-motion: no-preference){
+    .blink{animation:blink 1.6s steps(2) infinite;}
+    @keyframes blink{50%{opacity:0;}}
+  }
+</style>
+</head>
+<body data-lens="machine">
+
+<div id="canvas-wrap"></div>
+<div id="scan"></div>
+<div id="hud"></div>
+
+<div id="panel">
+  <div id="lens-bar">
+    <button id="lens-toggle">◈ LENS: MACHINE ▾</button>
+    <button id="export-btn" class="small">⇩ SAVE</button>
+    <button id="import-btn" class="small">⇧ LOAD</button>
+    <input type="file" id="import-file" accept=".json" style="display:none">
+  </div>
+
+  <div id="drawer">
+    <div class="lens-card" data-lens="ignatian">
+      <h3>✠ IGNATIAN</h3>
+      <p>Discernment of spirits. Consolation &amp; desolation. The composition of place. A.M.D.G.</p>
+    </div>
+    <div class="lens-card" data-lens="scientific">
+      <h3>△ SCIENTIFIC</h3>
+      <p>PAD dimensional affect model. Valence, arousal, dominance. Set-point &amp; flexibility.</p>
+    </div>
+    <div class="lens-card" data-lens="machine">
+      <h3>▣ MACHINE</h3>
+      <p>Raw operations. No justification narrative. The mechanism without the story.</p>
+    </div>
+    <div class="toggles">
+      <button class="tog on" id="tog-labels">AXIS LABELS</button>
+      <button class="tog on" id="tog-region">HOME REGION</button>
+      <button class="tog on" id="tog-spin">AMBIENT SPIN</button>
+      <button class="tog on" id="tog-drops">DROP LINES</button>
+    </div>
+    <div class="hint">Names &amp; notes are stored per lens — switch lenses and the seeded points
+      rename themselves. Groups form territory-ellipsoids; ordered groups draw chains.
+      Overlapping territories glow brighter where they intersect.</div>
+    <div id="about"></div>
+  </div>
+
+  <!-- ============ POINT EDITOR ============ -->
+  <div class="row nav-row">
+    <button id="prev-btn">◀</button>
+    <div style="flex:1">
+      <input id="pt-name" type="text" maxlength="30" placeholder="NAME">
+      <div id="pt-counter">0 / 0</div>
+    </div>
+    <button id="next-btn">▶</button>
+    <button id="add-btn">+ ADD</button>
+    <button id="del-btn" class="danger">✕</button>
+  </div>
+
+  <div id="editor">
+    <div class="sec-label" id="lbl-coords"></div>
+    <div class="slider-row">
+      <label>X <span class="sub" id="sub-x"></span></label>
+      <input type="range" id="sx" min="-10" max="10" step="0.1">
+      <input type="number" id="nx" min="-10" max="10" step="0.1">
+    </div>
+    <div class="slider-row">
+      <label>Y <span class="sub" id="sub-y"></span></label>
+      <input type="range" id="sy" min="-10" max="10" step="0.1">
+      <input type="number" id="ny" min="-10" max="10" step="0.1">
+    </div>
+    <div class="slider-row">
+      <label>Z <span class="sub" id="sub-z"></span></label>
+      <input type="range" id="sz" min="-10" max="10" step="0.1">
+      <input type="number" id="nz" min="-10" max="10" step="0.1">
+    </div>
+
+    <div class="sec-label" id="lbl-color"></div>
+    <div class="slider-row">
+      <label>HUE</label>
+      <input type="range" id="hue-slider" min="0" max="360" step="1">
+      <div class="row" style="margin:0;gap:4px;justify-content:center">
+        <div class="swatch" id="swatch"></div><span id="hue-val" style="font-size:11px"></span>
+      </div>
+    </div>
+    <div class="slider-row">
+      <label>SAT %</label>
+      <input type="range" id="sat-slider" min="0" max="100" step="1">
+      <span id="sat-val" style="font-size:11px;text-align:center"></span>
+    </div>
+    <div class="slider-row">
+      <label>LIGHT %</label>
+      <input type="range" id="lit-slider" min="0" max="100" step="1">
+      <span id="lit-val" style="font-size:11px;text-align:center"></span>
+    </div>
+    <div class="slider-row">
+      <label id="lbl-size">SIZE</label>
+      <input type="range" id="size-slider" min="0.1" max="2" step="0.05">
+      <span id="size-val" style="font-size:11px;text-align:center"></span>
+    </div>
+
+    <div class="sec-label" id="lbl-shape"></div>
+    <div id="shape-row">
+      <button class="shape-btn" data-shape="sphere">SPHERE</button>
+      <button class="shape-btn" data-shape="cube">CUBE</button>
+      <button class="shape-btn" data-shape="tetra">TETRA</button>
+      <button class="shape-btn" data-shape="octa">OCTA</button>
+      <button class="shape-btn" data-shape="cone">CONE</button>
+      <button class="shape-btn" data-shape="torus">TORUS</button>
+    </div>
+
+    <div class="sec-label" id="lbl-notes"></div>
+    <textarea id="notes"></textarea>
+  </div>
+  <div id="empty-msg"></div>
+
+  <!-- ============ GROUPS ============ -->
+  <div class="sec-label" id="lbl-groups" style="margin-top:18px"></div>
+  <div class="row nav-row">
+    <button id="gprev-btn">◀</button>
+    <div style="flex:1">
+      <input id="grp-name" type="text" maxlength="30" placeholder="GROUP NAME">
+      <div id="grp-counter">0 / 0</div>
+    </div>
+    <button id="gnext-btn">▶</button>
+    <button id="gadd-btn">+ ADD</button>
+    <button id="gdel-btn" class="danger">✕</button>
+  </div>
+
+  <div id="grp-editor">
+    <div class="row">
+      <button id="grp-assign" class="small" style="flex:2"></button>
+      <button id="grp-earlier" class="small">◀ POS</button>
+      <button id="grp-later" class="small">POS ▶</button>
+    </div>
+    <div class="row">
+      <button id="grp-chain" class="small" style="flex:1">CHAIN</button>
+      <button id="grp-show" class="small" style="flex:1">TERRITORY</button>
+      <span id="grp-members" style="font-size:10px;color:var(--dim)"></span>
+    </div>
+    <div class="slider-row">
+      <label>HUE</label>
+      <input type="range" id="grp-hue" min="0" max="360" step="1">
+      <div class="swatch" id="grp-swatch" style="justify-self:center"></div>
+    </div>
+    <div class="slider-row">
+      <label id="lbl-spread">SPREAD k·σ</label>
+      <input type="range" id="grp-k" min="1" max="2.5" step="0.05">
+      <span id="grp-k-val" style="font-size:11px;text-align:center"></span>
+    </div>
+    <div id="grp-stats"></div>
+  </div>
+  <div id="grp-empty"></div>
+
+  <div id="motto"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   LENSES
+   ============================================================ */
+const LENSES = {
+machine: {
+  css:{bg:"#000000",panel:"#020c04",main:"#00ff41",dim:"#00992a",faint:"#003b12"},
+  font:"'Courier New',Courier,monospace",
+  scene:{bg:0x000000,fog:0x000000,gridA:0x00992a,gridB:0x003b12,axis:0x00ff41,
+         frame:0x004d16,halo:0x00ff41,region:0x00ff41,label:"#00ff41",amb:0x224422,key:0x88ffaa},
+  hud:"STATE GRID v3.0 █\nX VALENCE · Y AROUSAL · Z DOMINANCE\n1F ROTATE | PINCH ZOOM | 2F PAN",
+  axes:{xp:"X VALENCE +",yp:"Y AROUSAL +",zp:"Z DOMINANCE +"},
+  ui:{coords:"COORDINATES [−10 … +10]",subx:"VALENCE −/+",suby:"AROUSAL −/+",subz:"CONTROL −/+",
+      color:"COLOR [HSL] + SIZE",size:"SIZE",shape:"SHAPE",notes:"NOTES",
+      notesPh:"What does this point mean?",
+      empty:"NO POINTS LOADED — TAP [+ ADD] TO PLACE ONE",
+      region:"TARGET REGION",motto:"OPERATIONS WITHOUT NARRATIVE",
+      groups:"GROUPS / REGIONS",grpEmpty:"NO GROUPS — TAP [+ ADD] TO DEFINE A REGION",
+      ctr:"REGION CENTER",
+      octTags:{"+++":"elevated corner","---":"depression corner","-++":"rage zone",
+               "-+-":"panic·anxiety zone","+-+":"calm·agentic","++-":"excited·powerless",
+               "+--":"pleasant·flat·passive","--+":"grim·controlled"}},
+  about:`<h4>▣ THE MACHINE LENS</h4>
+This view strips the justification layer. What remains: scheduled self-observation
+(reading your coordinates), externally supplied sorting criteria (classifying vectors),
+response inhibition (shrinking induced displacement), controlled imaginative exposure
+(visiting hostile coordinates inside a container), and value–behavior confrontation
+(discrepancy from the anchored region as motive force).
+<h4>GROUPS</h4>
+A group's ellipsoid is the covariance region of its member points — the territory a
+pattern occupies. An ordered group is a chain: one state leading to the next, a
+trajectory through the space. The octant table reports what fraction of a territory's
+volume lies in which diagnostic corner of the grid. The center of a territory is the
+center of ground covered — NOT an average state; the midpoint of a journey may pass
+through coordinates never occupied.
+<h4>THE CLAIM</h4>
+Every tradition — religious or clinical — is a branding wrapper around these same
+operations. This lens shows the room.`
+},
+ignatian: {
+  css:{bg:"#0c0703",panel:"#120a04",main:"#e8b54a",dim:"#9a7430",faint:"#3a2a10"},
+  font:"Georgia,'Times New Roman',serif",
+  scene:{bg:0x0c0703,fog:0x0c0703,gridA:0x9a7430,gridB:0x3a2a10,axis:0xe8b54a,
+         frame:0x4d3812,halo:0xe8b54a,region:0xe8b54a,label:"#e8b54a",amb:0x332211,key:0xffcc77},
+  hud:"COMPOSITIO LOCI — the composition of place ✠\nX CONSOLATION · Y FERVOR · Z FREEDOM\n1F ROTATE | PINCH ZOOM | 2F PAN",
+  axes:{xp:"CONSOLATION +",yp:"FERVOR +",zp:"FREEDOM +"},
+  ui:{coords:"THE THREE MOVEMENTS [−10 … +10]",
+      subx:"DESOLATION/CONSOLATION",suby:"ARIDITY/FERVOR",subz:"ATTACHMENT/FREEDOM",
+      color:"ILLUMINATION [HSL] + MAGNITUDE",size:"MAGNITUDE",shape:"FORM",
+      notes:"DISCERNMENT JOURNAL",
+      notesPh:"What spirit moves here? Whence does it come — whither does it lead?",
+      empty:"THE FIELD IS EMPTY — TAP [+ ADD] TO COMPOSE A PLACE",
+      region:"INDIFERENCIA",motto:"AD MAIOREM DEI GLORIAM",
+      groups:"MOVEMENTS / TERRITORIES",grpEmpty:"NO MOVEMENTS MARKED — TAP [+ ADD]",
+      ctr:"HEART OF THE TERRITORY",
+      octTags:{"+++":"false consolation","---":"deep desolation","-++":"wrath",
+               "-+-":"agitation·scruples","+-+":"quiet consolation","++-":"zeal w/o freedom",
+               "+--":"complacency","--+":"stoic dryness"}},
+  about:`<h4>✠ THE IGNATIAN LENS</h4>
+In the <i>Spiritual Exercises</i> (composed 1522–1524), Ignatius of Loyola instructs the
+exercitant to begin each contemplation with the <b>composition of place</b> — seeing the
+spot with the eyes of the imagination. This grid is a composition of place for the
+interior life itself: the soul's movements made visible and locatable.
+<h4>THE AXES</h4>
+<b>X — Consolation/Desolation.</b> Consolation: every increase of hope, faith and
+charity, every interior joy that draws one toward heavenly things. Desolation: darkness
+and disturbance of soul, movement to what is low, restlessness, loss of hope. These are
+directions of movement, not mere moods.
+<b>Y — Fervor/Aridity.</b> The energy of the spiritual life: zeal at one pole, dryness
+and torpor at the other. A purifying dryness is distinguished from the noonday demon
+of acedia.
+<b>Z — Freedom/Attachment.</b> Where the clinical model says "dominance," Ignatius says
+<b>interior freedom</b> — and inverts the mechanism: agency is gained through detachment.
+The Principle and Foundation asks for poise before riches or poverty, honor or dishonor.
+<h4>TERRITORIES &amp; CHAINS</h4>
+A discernment is rarely a single point; it is a <b>movement</b> — one interior state
+leading to the next. The chain traces a movement from its beginning through its middle
+to its end, which is precisely how Rule 4 of the Second Week instructs us to test it:
+false consolation reveals itself by where it terminates. The ellipsoid marks the
+territory a spirit habitually occupies in the soul; where two territories overlap and
+glow, two spirits contend for the same ground.
+<h4>THE RULES, APPLIED</h4>
+First Week, Rule 5: in desolation, never make a change. Rule 6: <i>agere contra</i>.
+Rule 8: patience — desolation passes. The Examen plots the day's points; the magis sets
+the destination; <i>cura personalis</i> insists the whole person be mapped.`
+},
+scientific: {
+  css:{bg:"#0d1117",panel:"#11161e",main:"#5db1ff",dim:"#3a6f9e",faint:"#1a2c40"},
+  font:"'Segoe UI',Roboto,Helvetica,Arial,sans-serif",
+  scene:{bg:0x0d1117,fog:0x0d1117,gridA:0x3a6f9e,gridB:0x1a2c40,axis:0x5db1ff,
+         frame:0x23405c,halo:0x5db1ff,region:0x5db1ff,label:"#5db1ff",amb:0x1a2433,key:0x99ccff},
+  hud:"PAD STATE-SPACE — dimensional affect model\nX VALENCE · Y AROUSAL · Z DOMINANCE\n1F ROTATE | PINCH ZOOM | 2F PAN",
+  axes:{xp:"VALENCE +",yp:"AROUSAL +",zp:"DOMINANCE +"},
+  ui:{coords:"STATE VECTOR [−10.0 … +10.0]",
+      subx:"HEDONIC TONE",suby:"ACTIVATION",subz:"PERCEIVED CONTROL",
+      color:"MARKER COLOR [HSL] + SCALE",size:"SCALE",shape:"MARKER",
+      notes:"OBSERVATIONS",
+      notesPh:"Antecedents, response pattern, duration, context…",
+      empty:"NO DATA POINTS — TAP [+ ADD] TO RECORD A STATE",
+      region:"SET-POINT REGION",motto:"MEASURE · MODEL · REVISE",
+      groups:"CLUSTERS / CONFIDENCE REGIONS",grpEmpty:"NO CLUSTERS DEFINED — TAP [+ ADD]",
+      ctr:"CENTROID (region center — NOT a mean state)",
+      octTags:{"+++":"manic-range","---":"depressive-range","-++":"anger-range",
+               "-+-":"fear-range","+-+":"calm/control","++-":"elated/low-agency",
+               "+--":"serene/passive","--+":"detached control"}},
+  about:`<h4>△ THE SCIENTIFIC LENS</h4>
+This instrument implements the <b>PAD dimensional model</b> of affect:
+Pleasure–Arousal–Dominance (Mehrabian &amp; Russell, 1974; Russell &amp; Mehrabian,
+1977). The two-dimensional circumplex (Russell, 1980) is the X–Y floor of this space;
+dominance restores the third factor that distinguishes anger from fear — both negative
+and activated, but opposite in perceived control (Harmon-Jones &amp; Allen, 1998).
+<h4>CLUSTERS AS COVARIANCE REGIONS</h4>
+A cluster's ellipsoid is its <b>covariance confidence region</b>: centered on the mean,
+oriented along the eigenvectors of the sample covariance matrix, with semi-axes
+k·√λᵢ. At k≈1 the region approximates one standard deviation of the cloud; k≈2
+approaches a 95%-style region under normality assumptions the data does not strictly
+satisfy — treat the boundary as descriptive, not inferential. Octant shares and
+overlaps are estimated by Monte Carlo sampling (~12,000 draws per region); figures are
+reported to a precision the underlying self-report data does not exceed.
+<h4>CHAINS AS TRAJECTORIES</h4>
+An ordered cluster renders as a directed path: a state trajectory. Note the centroid
+caveat — the center of a trajectory's region is the center of ground covered, not an
+average state; a path's midpoint may lie at coordinates never occupied.
+<h4>MODEL LIMITS</h4>
+Axes covary in vivo; the space is not Euclidean; a person is a distribution, not a
+point. Affect labeling itself downregulates (Lieberman et&nbsp;al., 2007) — plotting
+the point is already an intervention.`
+}
+};
+
+/* ============================================================
+   DATA
+   ============================================================ */
+function L(machine, ignatian, scientific){ return {machine, ignatian, scientific}; }
+let nextPtId = 8, nextGrpId = 2;
+let points = [
+ {id:1,x:4,y:0,z:5,h:120,s:100,l:50,size:0.6,shape:"sphere",lensText:L(
+   {name:"TARGET",notes:"Home region: mildly positive, mid-band arousal, solid agency. The aim is mobility around this region, not fixation on it."},
+   {name:"INDIFERENCIA",notes:"The Principle and Foundation: poised freedom before riches or poverty, honor or dishonor. Not numbness — readiness. The magis points the way from here."},
+   {name:"SET-POINT",notes:"Homeostatic home base. Health = this region + flexibility of travel (Kashdan & Rottenberg, 2010)."})},
+ {id:2,x:-7,y:9,z:-8,h:0,s:100,l:55,size:0.5,shape:"tetra",lensText:L(
+   {name:"PANIC",notes:"Miserable, maximally activated, zero perceived control."},
+   {name:"AGITATION",notes:"The enemy is weak before strength and strong before weakness (Rule 12). Agere contra — act directly against the fear."},
+   {name:"ACUTE FEAR STATE",notes:"Sympathetic surge. Repeated visitation under supported control collapses the fear structure (Foa & Kozak, 1986)."})},
+ {id:3,x:-8,y:-7,z:-6,h:230,s:70,l:40,size:0.5,shape:"cube",lensText:L(
+   {name:"DEPRESSION",notes:"Miserable, deactivated, helpless."},
+   {name:"DESOLATION",notes:"Darkness of soul, movement to low things (Rule 4). Rule 5: in desolation NEVER change a resolution made in consolation. Rule 8: it passes."},
+   {name:"DEPRESSIVE PATTERN",notes:"Anhedonia + psychomotor retardation + helplessness (cf. Seligman, 1975). The triple-negative corner."})},
+ {id:4,x:-6,y:8,z:5,h:15,s:100,l:50,size:0.5,shape:"octa",lensText:L(
+   {name:"RAGE",notes:"Negative valence but HIGH dominance — why anger feels better than fear."},
+   {name:"WRATH",notes:"Masquerades as strength. Wrath is the bodyguard of an attachment — examine what attachment was threatened."},
+   {name:"ANGER STATE",notes:"The anomaly requiring the third axis: approach-motivated negative affect (Harmon-Jones & Allen, 1998)."})},
+ {id:5,x:-5,y:6,z:-5,h:45,s:100,l:50,size:0.45,shape:"cone",lensText:L(
+   {name:"ANXIETY",notes:"Negative, activated, low control."},
+   {name:"SCRUPLES",notes:"The anxious conscience Ignatius suffered at Manresa. Refined by firm rules and a trusted guide, not by more scrupulous searching."},
+   {name:"ANXIOUS APPREHENSION",notes:"Vigilance + worry: future-oriented threat simulation, low perceived control."})},
+ {id:6,x:0,y:-9,z:-4,h:200,s:15,l:55,size:0.45,shape:"torus",lensText:L(
+   {name:"NUMBNESS",notes:"The dangerous one: valence reads neutral while the system is offline."},
+   {name:"ACEDIA",notes:"The noonday demon: torpor that mimics peace. Not rest but flight — the soul gone absent from its post."},
+   {name:"DISSOCIATIVE BLUNTING",notes:"Hypoarousal, blunted affect. The neutral reading IS the symptom."})},
+ {id:7,x:8,y:10,z:9,h:300,s:100,l:60,size:0.55,shape:"sphere",lensText:L(
+   {name:"MANIA",notes:"Maximum-positive on all axes is NOT health."},
+   {name:"FALSE CONSOLATION",notes:"The enemy can appear as an angel of light (2nd Week, Rule 4). Test the trajectory: where does it terminate?"},
+   {name:"MANIC ELEVATION",notes:"Expansive affect, goal dysregulation. The corner-maximum is pathology, not success."})}
+];
+let groups = [
+ {id:1, name:"THE SHADOW REGION", hue:0, ordered:false, show:true, k:1.3,
+  members:[2,3,4,5,6]}
+];
+let sel = 0, selG = 0;
+let cur = "machine";
+const opts = {labels:true, region:true, spin:true, drops:true};
+
+function ptById(id){ return points.find(p=>p.id===id); }
+function getText(p){
+  const lt = p.lensText || {};
+  return lt[cur] || lt.machine || {name:"", notes:""};
+}
+function setText(p, key, val){
+  p.lensText = p.lensText || {};
+  if(!p.lensText[cur]){
+    const base = getText(p);
+    p.lensText[cur] = {name:base.name, notes:base.notes};
+  }
+  p.lensText[cur][key] = val;
+}
+
+/* ============================================================
+   3x3 SYMMETRIC EIGEN (Jacobi) + ELLIPSOID FIT
+   ============================================================ */
+function eigenSym3(A){
+  const a = A.map(r=>r.slice());
+  const v = [[1,0,0],[0,1,0],[0,0,1]];
+  for(let iter=0; iter<40; iter++){
+    let p=0,q=1,mx=Math.abs(a[0][1]);
+    if(Math.abs(a[0][2])>mx){p=0;q=2;mx=Math.abs(a[0][2]);}
+    if(Math.abs(a[1][2])>mx){p=1;q=2;mx=Math.abs(a[1][2]);}
+    if(mx<1e-10) break;
+    const phi = 0.5*Math.atan2(2*a[p][q], a[q][q]-a[p][p]);
+    const c=Math.cos(phi), s=Math.sin(phi);
+    for(let k=0;k<3;k++){
+      const akp=a[k][p], akq=a[k][q];
+      a[k][p]=c*akp-s*akq; a[k][q]=s*akp+c*akq;
+    }
+    for(let k=0;k<3;k++){
+      const apk=a[p][k], aqk=a[q][k];
+      a[p][k]=c*apk-s*aqk; a[q][k]=s*apk+c*aqk;
+    }
+    for(let k=0;k<3;k++){
+      const vkp=v[k][p], vkq=v[k][q];
+      v[k][p]=c*vkp-s*vkq; v[k][q]=s*vkp+c*vkq;
+    }
+  }
+  return {vals:[a[0][0],a[1][1],a[2][2]],
+          vecs:[ new THREE.Vector3(v[0][0],v[1][0],v[2][0]),
+                 new THREE.Vector3(v[0][1],v[1][1],v[2][1]),
+                 new THREE.Vector3(v[0][2],v[1][2],v[2][2]) ]};
+}
+function fitEllipsoid(g){
+  const pts = g.members.map(ptById).filter(Boolean);
+  if(!pts.length) return null;
+  const c = new THREE.Vector3();
+  pts.forEach(p=>c.add(new THREE.Vector3(p.x,p.y,p.z)));
+  c.divideScalar(pts.length);
+  if(pts.length===1){
+    return {center:c, e:[new THREE.Vector3(1,0,0),new THREE.Vector3(0,1,0),
+            new THREE.Vector3(0,0,1)], radii:[0.8,0.8,0.8], n:1};
+  }
+  const C = [[0,0,0],[0,0,0],[0,0,0]];
+  pts.forEach(p=>{
+    const d = [p.x-c.x, p.y-c.y, p.z-c.z];
+    for(let i=0;i<3;i++) for(let j=0;j<3;j++) C[i][j]+=d[i]*d[j];
+  });
+  for(let i=0;i<3;i++) for(let j=0;j<3;j++) C[i][j]/=pts.length;
+  const eg = eigenSym3(C);
+  // right-handed basis
+  const e = eg.vecs;
+  if(new THREE.Vector3().crossVectors(e[0],e[1]).dot(e[2])<0) e[2].negate();
+  const radii = eg.vals.map(v=>Math.max(0.45, g.k*Math.sqrt(Math.max(v,0))));
+  return {center:c, e, radii, n:pts.length};
+}
+function insideE(E, p){
+  const d = new THREE.Vector3().subVectors(p, E.center);
+  const lx = d.dot(E.e[0])/E.radii[0],
+        ly = d.dot(E.e[1])/E.radii[1],
+        lz = d.dot(E.e[2])/E.radii[2];
+  return lx*lx+ly*ly+lz*lz <= 1;
+}
+
+/* ============================================================
+   SCENE
+   ============================================================ */
+const wrap = document.getElementById("canvas-wrap");
+const W = () => wrap.clientWidth, H = () => wrap.clientHeight;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(55, W()/H(), 0.1, 500);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(W(),H());
+wrap.appendChild(renderer.domElement);
+let ambLight = new THREE.AmbientLight(0x224422, 1.2);
+let keyLight = new THREE.PointLight(0x88ffaa, 1.0, 200);
+keyLight.position.set(20,30,20);
+scene.add(ambLight, keyLight);
+
+function textSprite(txt, size, color, font){
+  const c = document.createElement("canvas");
+  let ctx = c.getContext("2d");
+  const fs = 48, fam = font || "Courier New";
+  ctx.font = "bold "+fs+"px "+fam;
+  c.width = Math.max(2, ctx.measureText(txt).width + 24);
+  c.height = fs + 18;
+  ctx = c.getContext("2d");
+  ctx.font = "bold "+fs+"px "+fam;
+  ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 12;
+  ctx.textBaseline = "middle";
+  ctx.fillText(txt, 12, c.height/2);
+  const tex = new THREE.CanvasTexture(c);
+  tex.minFilter = THREE.LinearFilter;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+  sp.scale.set(c.width/c.height*size, size, 1);
+  return sp;
+}
+function disposeObj(o){
+  scene.remove(o);
+  o.traverse?.(ch=>{
+    if(ch.geometry) ch.geometry.dispose();
+    if(ch.material){ if(ch.material.map) ch.material.map.dispose(); ch.material.dispose(); }
+  });
+}
+
+let staticObjs = [], regionMesh = null;
+function buildStatic(){
+  staticObjs.forEach(disposeObj); staticObjs = [];
+  const T = LENSES[cur].scene;
+  scene.background = new THREE.Color(T.bg);
+  scene.fog = new THREE.Fog(T.fog, 40, 90);
+  ambLight.color.set(T.amb); keyLight.color.set(T.key);
+  const grid = new THREE.GridHelper(20, 20, T.gridA, T.gridB);
+  grid.position.y = -10;
+  const gridTop = new THREE.GridHelper(20, 20, T.gridB, T.gridB);
+  gridTop.position.y = 10;
+  gridTop.material.opacity = 0.5; gridTop.material.transparent = true;
+  const frame = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(20,20,20)),
+    new THREE.LineBasicMaterial({color:T.frame}));
+  staticObjs.push(grid, gridTop, frame);
+  const mk = (a,b)=> new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([a,b]),
+    new THREE.LineBasicMaterial({color:T.axis}));
+  staticObjs.push(
+    mk(new THREE.Vector3(-10,0,0), new THREE.Vector3(10,0,0)),
+    mk(new THREE.Vector3(0,-10,0), new THREE.Vector3(0,10,0)),
+    mk(new THREE.Vector3(0,0,-10), new THREE.Vector3(0,0,10)));
+  if(opts.labels){
+    const A = LENSES[cur].axes, col = T.label, f = LENSES[cur].font;
+    const sp=(t,x,y,z)=>{const s=textSprite(t,1.1,col,f);s.position.set(x,y,z);return s;};
+    staticObjs.push(sp(A.xp,13,0,0),sp("−",-11.2,0,0),sp(A.yp,0,11.4,0),
+                    sp("−",0,-11.2,0),sp(A.zp,0,0,13),sp("−",0,0,-11.2));
+  }
+  if(opts.region){
+    regionMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 24, 18),
+      new THREE.MeshBasicMaterial({color:T.region,transparent:true,opacity:0.10,depthWrite:false}));
+    regionMesh.position.set(4,0,5);
+    regionMesh.scale.set(1.4,2.4,1.4);
+    const wire = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 12, 9),
+      new THREE.MeshBasicMaterial({color:T.region,wireframe:true,transparent:true,opacity:0.12}));
+    regionMesh.add(wire);
+    const lbl = textSprite(LENSES[cur].ui.region, 0.8, T.label, LENSES[cur].font);
+    lbl.position.set(4, 3.2, 5);
+    staticObjs.push(regionMesh, lbl);
+  } else regionMesh = null;
+  staticObjs.forEach(o=>scene.add(o));
+}
+
+/* ---------- points ---------- */
+const ptGroup = new THREE.Group();
+scene.add(ptGroup);
+function geomFor(shape, s){
+  switch(shape){
+    case "cube":  return new THREE.BoxGeometry(s*1.5,s*1.5,s*1.5);
+    case "tetra": return new THREE.TetrahedronGeometry(s*1.2);
+    case "octa":  return new THREE.OctahedronGeometry(s);
+    case "cone":  return new THREE.ConeGeometry(s*0.8,s*1.8,20);
+    case "torus": return new THREE.TorusGeometry(s*0.8,s*0.3,12,28);
+    default:      return new THREE.SphereGeometry(s,24,18);
+  }
+}
+const halo = new THREE.Mesh(
+  new THREE.SphereGeometry(1,16,12),
+  new THREE.MeshBasicMaterial({color:0x00ff41,wireframe:true,transparent:true,opacity:0.55}));
+halo.visible = false;
+scene.add(halo);
+
+function rebuildPoints(){
+  while(ptGroup.children.length){
+    const m = ptGroup.children[0];
+    ptGroup.remove(m); disposeObj(m);
+  }
+  points.forEach((p,i)=>{
+    const col = new THREE.Color().setHSL(p.h/360,p.s/100,p.l/100);
+    const mesh = new THREE.Mesh(geomFor(p.shape,p.size),
+      new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:0.45,
+        roughness:0.4,metalness:0.1}));
+    mesh.position.set(p.x,p.y,p.z);
+    const tag = textSprite(getText(p).name||("PT "+(i+1)), 0.9,
+      "hsl("+p.h+","+p.s+"%,"+Math.max(45,p.l)+"%)", LENSES[cur].font);
+    tag.position.set(0,p.size+0.9,0);
+    mesh.add(tag);
+    if(opts.drops){
+      const drop = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(
+          [new THREE.Vector3(p.x,p.y,p.z), new THREE.Vector3(p.x,-10,p.z)]),
+        new THREE.LineBasicMaterial({color:col,transparent:true,opacity:0.22}));
+      ptGroup.add(drop);
+    }
+    ptGroup.add(mesh);
+  });
+  updateHalo();
+  rebuildGroups();
+}
+function updateHalo(){
+  if(sel<0||sel>=points.length){halo.visible=false;return;}
+  const p = points[sel];
+  halo.visible = true;
+  halo.material.color.set(LENSES[cur].scene.halo);
+  halo.position.set(p.x,p.y,p.z);
+  halo.userData.base = p.size*1.6;
+}
+
+/* ---------- groups: ellipsoids + chains ---------- */
+const grpObjs = new THREE.Group();
+scene.add(grpObjs);
+let ellipsoids = {};
+function rebuildGroups(){
+  while(grpObjs.children.length){
+    const m = grpObjs.children[0];
+    grpObjs.remove(m); disposeObj(m);
+  }
+  ellipsoids = {};
+  groups.forEach(g=>{
+    const E = fitEllipsoid(g);
+    if(!E) return;
+    ellipsoids[g.id] = E;
+    const col = new THREE.Color("hsl("+g.hue+",90%,55%)");
+    if(g.show){
+      const m4 = new THREE.Matrix4().makeBasis(E.e[0],E.e[1],E.e[2]);
+      const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(1,28,20),
+        new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.14,
+          blending:THREE.AdditiveBlending,depthWrite:false}));
+      mesh.quaternion.setFromRotationMatrix(m4);
+      mesh.scale.set(E.radii[0],E.radii[1],E.radii[2]);
+      mesh.position.copy(E.center);
+      const wire = new THREE.Mesh(
+        new THREE.SphereGeometry(1,14,10),
+        new THREE.MeshBasicMaterial({color:col,wireframe:true,transparent:true,
+          opacity:0.10,blending:THREE.AdditiveBlending,depthWrite:false}));
+      mesh.add(wire);
+      grpObjs.add(mesh);
+      const lbl = textSprite(g.name, 0.75, "hsl("+g.hue+",90%,65%)", LENSES[cur].font);
+      lbl.position.copy(E.center).add(new THREE.Vector3(0, E.radii[1]+0.8, 0));
+      grpObjs.add(lbl);
+    }
+    if(g.ordered && g.members.length>=2){
+      const pts = g.members.map(ptById).filter(Boolean)
+        .map(p=>new THREE.Vector3(p.x,p.y,p.z));
+      const line = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(pts),
+        new THREE.LineBasicMaterial({color:col,transparent:true,opacity:0.8}));
+      grpObjs.add(line);
+      for(let i=0;i<pts.length-1;i++){
+        const dir = new THREE.Vector3().subVectors(pts[i+1],pts[i]);
+        if(dir.lengthSq()<1e-6) continue;
+        dir.normalize();
+        const cone = new THREE.Mesh(
+          new THREE.ConeGeometry(0.18,0.5,8),
+          new THREE.MeshBasicMaterial({color:col}));
+        cone.position.lerpVectors(pts[i],pts[i+1],0.55);
+        cone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
+        grpObjs.add(cone);
+      }
+    }
+  });
+  scheduleStats();
+}
+
+/* ---------- Monte Carlo stats ---------- */
+let statsTimer = null;
+function scheduleStats(){ clearTimeout(statsTimer); statsTimer = setTimeout(computeStats, 250); }
+let spare = null;
+function randn(){
+  if(spare!==null){const v=spare;spare=null;return v;}
+  let u=0,v=0;
+  while(u===0)u=Math.random(); while(v===0)v=Math.random();
+  const m=Math.sqrt(-2*Math.log(u)), a=2*Math.PI*v;
+  spare = m*Math.sin(a);
+  return m*Math.cos(a);
+}
+function computeStats(){
+  const el = document.getElementById("grp-stats");
+  const g = groups[selG];
+  if(!g){ el.innerHTML=""; return; }
+  const E = ellipsoids[g.id];
+  const U = LENSES[cur].ui;
+  if(!E){ el.innerHTML = "<i>no member points — assign points to measure territory</i>"; return; }
+  const vol = (4/3)*Math.PI*E.radii[0]*E.radii[1]*E.radii[2];
+  const N = 12000;
+  const oct = {};
+  const others = groups.filter(o=>o.id!==g.id && ellipsoids[o.id]);
+  const ovl = {}; others.forEach(o=>ovl[o.id]=0);
+  const w = new THREE.Vector3();
+  for(let i=0;i<N;i++){
+    let x=randn(),y=randn(),z=randn();
+    const n=Math.hypot(x,y,z)||1;
+    const r=Math.cbrt(Math.random());
+    const lx=x/n*r*E.radii[0], ly=y/n*r*E.radii[1], lz=z/n*r*E.radii[2];
+    w.copy(E.center)
+     .addScaledVector(E.e[0],lx).addScaledVector(E.e[1],ly).addScaledVector(E.e[2],lz);
+    const key=(w.x>=0?"+":"-")+(w.y>=0?"+":"-")+(w.z>=0?"+":"-");
+    oct[key]=(oct[key]||0)+1;
+    others.forEach(o=>{ if(insideE(ellipsoids[o.id],w)) ovl[o.id]++; });
+  }
+  let html = "<b>"+U.ctr+":</b> ("+E.center.x.toFixed(1)+", "
+    +E.center.y.toFixed(1)+", "+E.center.z.toFixed(1)+")<br>"
+    +"<b>TOTAL VOLUME:</b> "+vol.toFixed(0)+" gu³ &nbsp;·&nbsp; "
+    +E.n+" pt"+(E.n>1?"s":"")+" · k="+g.k.toFixed(2)+"<br>"
+    +"<b>OCTANT SHARE</b> (sign of X,Y,Z):<br>";
+  Object.entries(oct).sort((a,b)=>b[1]-a[1]).forEach(([k,c])=>{
+    const pct = 100*c/N;
+    if(pct<0.5) return;
+    const tag = U.octTags[k]||"";
+    html += "<div class='oct-row'><span>("+k.split("").join(",")+") "
+      +pct.toFixed(0)+"% · "+(vol*c/N).toFixed(0)+" gu³</span>"
+      +"<span class='tag'>"+tag+"</span></div>";
+  });
+  if(others.length){
+    html += "<b>OVERLAP:</b><br>";
+    others.forEach(o=>{
+      html += "<div class='oct-row'><span>with "+o.name+"</span><span>"
+        +(100*ovl[o.id]/N).toFixed(0)+"% of this territory</span></div>";
+    });
+  }
+  el.innerHTML = html;
+}
+
+/* ============================================================
+   CAMERA + GESTURES
+   ============================================================ */
+let theta = Math.PI/4, phi = Math.PI/3, radius = 38;
+const target = new THREE.Vector3(0,0,0);
+function updateCamera(){
+  phi = Math.max(0.08, Math.min(Math.PI-0.08, phi));
+  radius = Math.max(8, Math.min(120, radius));
+  camera.position.set(
+    target.x + radius*Math.sin(phi)*Math.sin(theta),
+    target.y + radius*Math.cos(phi),
+    target.z + radius*Math.sin(phi)*Math.cos(theta));
+  camera.lookAt(target);
+}
+updateCamera();
+let touchMode=null,lastX=0,lastY=0,lastDist=0,lastMidX=0,lastMidY=0;
+const dist = t=>Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY);
+const mid  = t=>[(t[0].clientX+t[1].clientX)/2,(t[0].clientY+t[1].clientY)/2];
+wrap.addEventListener("touchstart", e=>{
+  e.preventDefault();
+  const t=e.touches;
+  if(t.length===1){touchMode="rotate";lastX=t[0].clientX;lastY=t[0].clientY;}
+  else if(t.length>=2){touchMode="pinchpan";lastDist=dist(t);const m=mid(t);lastMidX=m[0];lastMidY=m[1];}
+},{passive:false});
+wrap.addEventListener("touchmove", e=>{
+  e.preventDefault();
+  const t=e.touches;
+  if(touchMode==="rotate"&&t.length===1){
+    theta -= (t[0].clientX-lastX)*0.008;
+    phi   -= (t[0].clientY-lastY)*0.008;
+    lastX=t[0].clientX; lastY=t[0].clientY;
+    updateCamera();
+  } else if(touchMode==="pinchpan"&&t.length>=2){
+    const d=dist(t); radius *= lastDist/d; lastDist=d;
+    const m=mid(t);
+    const dx=m[0]-lastMidX, dy=m[1]-lastMidY;
+    lastMidX=m[0]; lastMidY=m[1];
+    const ps=radius*0.0016;
+    const right=new THREE.Vector3().setFromMatrixColumn(camera.matrix,0);
+    const up=new THREE.Vector3().setFromMatrixColumn(camera.matrix,1);
+    target.addScaledVector(right,-dx*ps);
+    target.addScaledVector(up, dy*ps);
+    updateCamera();
+  }
+},{passive:false});
+wrap.addEventListener("touchend", e=>{
+  const t=e.touches;
+  if(t.length===1){touchMode="rotate";lastX=t[0].clientX;lastY=t[0].clientY;}
+  else if(t.length===0){touchMode=null;}
+},{passive:false});
+let mouseDown=false;
+wrap.addEventListener("mousedown", e=>{mouseDown=true;lastX=e.clientX;lastY=e.clientY;});
+window.addEventListener("mouseup", ()=>mouseDown=false);
+window.addEventListener("mousemove", e=>{
+  if(!mouseDown) return;
+  theta-=(e.clientX-lastX)*0.008; phi-=(e.clientY-lastY)*0.008;
+  lastX=e.clientX; lastY=e.clientY; updateCamera();
+});
+wrap.addEventListener("wheel", e=>{
+  e.preventDefault(); radius*=(1+Math.sign(e.deltaY)*0.08); updateCamera();
+},{passive:false});
+
+/* ============================================================
+   UI
+   ============================================================ */
+const $ = id=>document.getElementById(id);
+const ui = {
+  name:$("pt-name"),counter:$("pt-counter"),
+  sx:$("sx"),sy:$("sy"),sz:$("sz"),nx:$("nx"),ny:$("ny"),nz:$("nz"),
+  hue:$("hue-slider"),sat:$("sat-slider"),lit:$("lit-slider"),size:$("size-slider"),
+  hueV:$("hue-val"),satV:$("sat-val"),litV:$("lit-val"),sizeV:$("size-val"),
+  swatch:$("swatch"),notes:$("notes"),editor:$("editor"),empty:$("empty-msg"),
+  gname:$("grp-name"),gcounter:$("grp-counter"),geditor:$("grp-editor"),gempty:$("grp-empty"),
+  gassign:$("grp-assign"),gmembers:$("grp-members"),gchain:$("grp-chain"),gshow:$("grp-show"),
+  ghue:$("grp-hue"),gswatch:$("grp-swatch"),gk:$("grp-k"),gkv:$("grp-k-val")
+};
+
+function applyLensCSS(){
+  const Lns = LENSES[cur];
+  const r = document.documentElement.style;
+  r.setProperty("--bg",Lns.css.bg); r.setProperty("--panel",Lns.css.panel);
+  r.setProperty("--main",Lns.css.main); r.setProperty("--dim",Lns.css.dim);
+  r.setProperty("--faint",Lns.css.faint); r.setProperty("--font",Lns.font);
+  document.body.dataset.lens = cur;
+  $("hud").innerHTML = Lns.hud.split("\n").map((l,i)=>i===0?"<b>"+l+"</b>":l).join("<br>");
+  $("lens-toggle").textContent = "◈ LENS: "+cur.toUpperCase()+" ▾";
+  $("lbl-coords").textContent = Lns.ui.coords;
+  $("sub-x").textContent = Lns.ui.subx;
+  $("sub-y").textContent = Lns.ui.suby;
+  $("sub-z").textContent = Lns.ui.subz;
+  $("lbl-color").textContent = Lns.ui.color;
+  $("lbl-size").textContent = Lns.ui.size;
+  $("lbl-shape").textContent = Lns.ui.shape;
+  $("lbl-notes").textContent = Lns.ui.notes;
+  $("lbl-groups").textContent = Lns.ui.groups;
+  ui.notes.placeholder = Lns.ui.notesPh;
+  ui.empty.textContent = Lns.ui.empty;
+  ui.gempty.textContent = Lns.ui.grpEmpty;
+  $("motto").textContent = Lns.ui.motto;
+  $("about").innerHTML = Lns.about;
+  document.querySelectorAll(".lens-card").forEach(c=>
+    c.classList.toggle("active", c.dataset.lens===cur));
+}
+
+function refreshPanel(){
+  const has = points.length>0;
+  ui.editor.style.display = has?"block":"none";
+  ui.empty.style.display = has?"none":"block";
+  ui.counter.textContent = has ? (sel+1)+" / "+points.length : "0 / 0";
+  if(has){
+    const p = points[sel], t = getText(p);
+    ui.name.value = t.name;
+    ui.sx.value=p.x; ui.nx.value=p.x;
+    ui.sy.value=p.y; ui.ny.value=p.y;
+    ui.sz.value=p.z; ui.nz.value=p.z;
+    ui.hue.value=p.h; ui.sat.value=p.s; ui.lit.value=p.l; ui.size.value=p.size;
+    ui.hueV.textContent=p.h+"°"; ui.satV.textContent=p.s+"%";
+    ui.litV.textContent=p.l+"%"; ui.sizeV.textContent=(+p.size).toFixed(2);
+    ui.swatch.style.background="hsl("+p.h+","+p.s+"%,"+p.l+"%)";
+    ui.notes.value = t.notes||"";
+    document.querySelectorAll(".shape-btn").forEach(b=>
+      b.classList.toggle("active", b.dataset.shape===p.shape));
+  } else ui.name.value="";
+  refreshGroupPanel();
+}
+function refreshGroupPanel(){
+  const has = groups.length>0;
+  ui.geditor.style.display = has?"block":"none";
+  ui.gempty.style.display = has?"none":"block";
+  ui.gcounter.textContent = has ? (selG+1)+" / "+groups.length : "0 / 0";
+  if(!has){ ui.gname.value=""; $("grp-stats").innerHTML=""; return; }
+  const g = groups[selG];
+  ui.gname.value = g.name;
+  ui.ghue.value = g.hue;
+  ui.gswatch.style.background = "hsl("+g.hue+",90%,55%)";
+  ui.gk.value = g.k; ui.gkv.textContent = g.k.toFixed(2)+"σ";
+  ui.gchain.classList.toggle("on", g.ordered);
+  ui.gshow.classList.toggle("on", g.show);
+  const p = points[sel];
+  const inG = p && g.members.includes(p.id);
+  ui.gassign.textContent = inG ? "⊖ REMOVE THIS POINT" : "⊕ ASSIGN THIS POINT";
+  ui.gmembers.textContent = g.members.length+" member"+(g.members.length===1?"":"s");
+  scheduleStats();
+}
+function commit(rebuild){ if(rebuild) rebuildPoints(); else {updateHalo(); rebuildGroups();} refreshPanel(); }
+
+/* lens switching */
+$("lens-toggle").onclick = ()=> $("drawer").classList.toggle("open");
+document.querySelectorAll(".lens-card").forEach(c=>{
+  c.onclick = ()=>{
+    cur = c.dataset.lens;
+    applyLensCSS(); buildStatic(); rebuildPoints(); refreshPanel();
+  };
+});
+function bindTog(id, key, needsStatic){
+  $(id).onclick = ()=>{
+    opts[key] = !opts[key];
+    $(id).classList.toggle("on", opts[key]);
+    if(needsStatic) buildStatic();
+    rebuildPoints();
+  };
+}
+bindTog("tog-labels","labels",true);
+bindTog("tog-region","region",true);
+bindTog("tog-drops","drops",false);
+$("tog-spin").onclick = ()=>{
+  opts.spin = !opts.spin;
+  $("tog-spin").classList.toggle("on", opts.spin);
+};
+
+/* export / import */
+$("export-btn").onclick = ()=>{
+  const blob = new Blob([JSON.stringify({lens:cur, points, groups, nextPtId, nextGrpId},null,1)],
+    {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "state_space_"+new Date().toISOString().slice(0,10)+".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+$("import-btn").onclick = ()=> $("import-file").click();
+$("import-file").addEventListener("change", e=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    try{
+      const data = JSON.parse(rd.result);
+      if(Array.isArray(data.points)){
+        points = data.points;
+        let maxId = 0;
+        points.forEach(p=>{ if(!p.id) p.id = ++maxId + 1000; maxId = Math.max(maxId, p.id); });
+        nextPtId = (data.nextPtId && data.nextPtId>maxId) ? data.nextPtId : maxId+1;
+        groups = Array.isArray(data.groups) ? data.groups : [];
+        let maxG = 0; groups.forEach(g=>maxG=Math.max(maxG,g.id||0));
+        nextGrpId = (data.nextGrpId && data.nextGrpId>maxG) ? data.nextGrpId : maxG+1;
+        if(data.lens && LENSES[data.lens]) cur = data.lens;
+        sel = 0; selG = 0;
+        applyLensCSS(); buildStatic(); rebuildPoints(); refreshPanel();
+      }
+    }catch(err){ ui.counter.textContent = "LOAD FAILED — INVALID FILE"; }
+    e.target.value = "";
+  };
+  rd.readAsText(f);
+});
+
+/* point nav / add / delete */
+$("prev-btn").onclick = ()=>{ if(points.length){ sel=(sel-1+points.length)%points.length; commit(false);} };
+$("next-btn").onclick = ()=>{ if(points.length){ sel=(sel+1)%points.length; commit(false);} };
+$("add-btn").onclick = ()=>{
+  const id = nextPtId++;
+  points.push({id, x:0,y:0,z:0,h:120,s:100,l:50,size:0.5,shape:"sphere",
+    lensText:{machine:{name:"POINT "+points.length+1,notes:""}}});
+  points[points.length-1].lensText.machine.name = "POINT "+points.length;
+  sel = points.length-1;
+  commit(true);
+};
+$("del-btn").onclick = ()=>{
+  if(!points.length) return;
+  const id = points[sel].id;
+  points.splice(sel,1);
+  groups.forEach(g=>{ g.members = g.members.filter(m=>m!==id); });
+  sel = Math.min(sel, points.length-1);
+  commit(true);
+};
+
+/* name + notes */
+ui.name.addEventListener("input", ()=>{
+  if(points[sel]){ setText(points[sel],"name",ui.name.value); rebuildPoints(); }});
+ui.notes.addEventListener("input", ()=>{
+  if(points[sel]) setText(points[sel],"notes",ui.notes.value); });
+
+/* coords */
+function bindCoord(slider, num, key){
+  const apply = v=>{
+    if(!points[sel]) return;
+    v = Math.max(-10, Math.min(10, parseFloat(v)||0));
+    points[sel][key]=v;
+    slider.value=v; num.value=v;
+    rebuildPoints();
+  };
+  slider.addEventListener("input", e=>apply(e.target.value));
+  num.addEventListener("change", e=>apply(e.target.value));
+}
+bindCoord(ui.sx,ui.nx,"x"); bindCoord(ui.sy,ui.ny,"y"); bindCoord(ui.sz,ui.nz,"z");
+
+/* style sliders */
+function bindStyle(slider, key, label, fmt){
+  slider.addEventListener("input", e=>{
+    if(!points[sel]) return;
+    points[sel][key]=parseFloat(e.target.value);
+    label.textContent = fmt(points[sel][key]);
+    ui.swatch.style.background =
+      "hsl("+points[sel].h+","+points[sel].s+"%,"+points[sel].l+"%)";
+    rebuildPoints();
+  });
+}
+bindStyle(ui.hue,"h",ui.hueV,v=>v+"°");
+bindStyle(ui.sat,"s",ui.satV,v=>v+"%");
+bindStyle(ui.lit,"l",ui.litV,v=>v+"%");
+bindStyle(ui.size,"size",ui.sizeV,v=>(+v).toFixed(2));
+
+/* shapes */
+document.querySelectorAll(".shape-btn").forEach(b=>{
+  b.onclick = ()=>{
+    if(!points[sel]) return;
+    points[sel].shape = b.dataset.shape;
+    rebuildPoints(); refreshPanel();
+  };
+});
+
+/* ---------- group controls ---------- */
+$("gprev-btn").onclick = ()=>{ if(groups.length){ selG=(selG-1+groups.length)%groups.length; refreshGroupPanel(); rebuildGroups(); } };
+$("gnext-btn").onclick = ()=>{ if(groups.length){ selG=(selG+1)%groups.length; refreshGroupPanel(); rebuildGroups(); } };
+$("gadd-btn").onclick = ()=>{
+  groups.push({id:nextGrpId++, name:"GROUP "+(groups.length+1),
+    hue:(groups.length*70)%360, ordered:false, show:true, k:1.3, members:[]});
+  selG = groups.length-1;
+  rebuildGroups(); refreshGroupPanel();
+};
+$("gdel-btn").onclick = ()=>{
+  if(!groups.length) return;
+  groups.splice(selG,1);
+  selG = Math.min(selG, groups.length-1);
+  rebuildGroups(); refreshGroupPanel();
+};
+ui.gname.addEventListener("input", ()=>{
+  if(groups[selG]){ groups[selG].name = ui.gname.value; rebuildGroups(); }});
+ui.gassign.onclick = ()=>{
+  const g = groups[selG], p = points[sel];
+  if(!g||!p) return;
+  const i = g.members.indexOf(p.id);
+  if(i>=0) g.members.splice(i,1); else g.members.push(p.id);
+  rebuildGroups(); refreshGroupPanel();
+};
+$("grp-earlier").onclick = ()=>{
+  const g = groups[selG], p = points[sel];
+  if(!g||!p) return;
+  const i = g.members.indexOf(p.id);
+  if(i>0){ [g.members[i-1],g.members[i]]=[g.members[i],g.members[i-1]];
+    rebuildGroups(); refreshGroupPanel(); }
+};
+$("grp-later").onclick = ()=>{
+  const g = groups[selG], p = points[sel];
+  if(!g||!p) return;
+  const i = g.members.indexOf(p.id);
+  if(i>=0 && i<g.members.length-1){
+    [g.members[i+1],g.members[i]]=[g.members[i],g.members[i+1]];
+    rebuildGroups(); refreshGroupPanel(); }
+};
+ui.gchain.onclick = ()=>{
+  const g = groups[selG]; if(!g) return;
+  g.ordered = !g.ordered;
+  rebuildGroups(); refreshGroupPanel();
+};
+ui.gshow.onclick = ()=>{
+  const g = groups[selG]; if(!g) return;
+  g.show = !g.show;
+  rebuildGroups(); refreshGroupPanel();
+};
+ui.ghue.addEventListener("input", e=>{
+  const g = groups[selG]; if(!g) return;
+  g.hue = parseFloat(e.target.value);
+  ui.gswatch.style.background = "hsl("+g.hue+",90%,55%)";
+  rebuildGroups();
+});
+ui.gk.addEventListener("input", e=>{
+  const g = groups[selG]; if(!g) return;
+  g.k = parseFloat(e.target.value);
+  ui.gkv.textContent = g.k.toFixed(2)+"σ";
+  rebuildGroups();
+});
+
+/* ============================================================
+   LOOP
+   ============================================================ */
+const clock = new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  if(halo.visible){
+    const s = (halo.userData.base||1)*(1+0.12*Math.sin(t*4));
+    halo.scale.set(s,s,s);
+    halo.material.opacity = 0.4+0.2*Math.sin(t*4);
+  }
+  if(opts.spin) ptGroup.children.forEach(m=>{ if(m.isMesh) m.rotation.y = t*0.4; });
+  if(regionMesh) regionMesh.rotation.y = t*0.05;
+  renderer.render(scene, camera);
+}
+animate();
+window.addEventListener("resize", ()=>{
+  camera.aspect=W()/H(); camera.updateProjectionMatrix(); renderer.setSize(W(),H());
+});
+
+applyLensCSS();
+buildStatic();
+rebuildPoints();
+refreshPanel();
+})();
+</script>
+</body>
+</html>
